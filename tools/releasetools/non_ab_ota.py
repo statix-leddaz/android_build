@@ -236,7 +236,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   common.CheckSize(boot_img.data, "boot.img", target_info)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
 
-  script.WriteRawImage("/boot", "boot.img")
+  script.AppendExtra('package_extract_file("boot.img", "/dev/block/bootdevice/by-name/boot");\n')
 
   script.ShowProgress(0.1, 10)
   device_specific.FullOTA_InstallEnd()
@@ -475,7 +475,7 @@ else
 
   if OPTIONS.two_step:
     common.ZipWriteStr(output_zip, "boot.img", target_boot.data)
-    script.WriteRawImage("/boot", "boot.img")
+    script.AppendExtra('package_extract_file("boot.img", "/dev/block/bootdevice/by-name/boot");\n')
     logger.info("writing full boot image (forced by two-step mode)")
 
   if not OPTIONS.two_step:
@@ -483,7 +483,7 @@ else
       if include_full_boot:
         logger.info("boot image changed; including full.")
         script.Print("Installing boot image...")
-        script.WriteRawImage("/boot", "boot.img")
+        script.AppendExtra('package_extract_file("boot.img", "/dev/block/bootdevice/by-name/boot");\n')
       else:
         # Produce the boot image by applying a patch to the current
         # contents of the boot partition, and write it back to the
